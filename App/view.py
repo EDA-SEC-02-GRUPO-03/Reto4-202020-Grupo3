@@ -52,6 +52,7 @@ citibike4 = 'Data\\201801-1-citibike-tripdata.csv'
 #  Menu principal
 # ___________________________________________________
 
+
 def printMenu():
     print("\n")
     print("------------------------------------------------------")
@@ -70,35 +71,36 @@ def printMenu():
     print("0- Salir")
     print("------------------------------------------------------")
 
+
 printMenu()
 
 
 def optionTwo():
-
+    pass
 
 def optionThree():
-
+    pass
 
 def optionFour():
-
+    pass
 
 def optionFive():
-
+    pass
 
 def optionSix():
-
+    pass
 
 def optionSeven():
-
+    pass
 
 def optionEight():
-
+    pass
 
 def optionNine():
-
+    pass
 
 def optionTen():
-
+    pass
 
 """
 Menu principal

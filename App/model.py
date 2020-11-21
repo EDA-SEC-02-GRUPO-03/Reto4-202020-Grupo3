@@ -28,9 +28,11 @@ from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
+from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
+from DISClib.DataStructures import edge as ed
 
 assert config
 
@@ -46,8 +48,9 @@ def newAnalyzer():
     try:
         citibike = {'graph': None,
                     'stops': None,
-                    'components': None,
-                    'paths': None
+                    'pairs': None
+                    #'components': None,
+                    #'paths': None
                     }
 
         citibike['stops'] = m.newMap(numelements=14000,
@@ -58,6 +61,9 @@ def newAnalyzer():
                                         directed=True,
                                         size=1000,
                                         comparefunction=compareStations)
+        citibike['pairs'] = m.newMap(numelements=14000,
+                                     maptype='PROBING',
+                                     comparefunction=comparePairs)
 
         return citibike
     except Exception as exp:
@@ -74,6 +80,7 @@ def addTrip(citibike, trip):
     addStation(citibike, origin)
     addStation(citibike, destination)
     addConnection(citibike, origin, destination, duration)
+    addPairs(citibike, origin, destination)
 
 def addStation(citibike, stationid):
     """
@@ -92,6 +99,50 @@ def addConnection(citibike, origin, destination, duration):
 
     if edge is None:
         gr.addEdge(citibike['graph'], origin, destination, duration)
+    else:
+        prev_duration = int(ed.weight(edge))
+        duration += prev_duration
+        ed.updateWeight(edge, duration)
+
+    return citibike
+
+def addPairs(citibike, origin, destination):
+    # edge = gr.getEdge(citibike['graph'], origin, destination)
+    repetitions = 0
+    pair = str(origin)+','+str(destination) # Creo la llave compuesta por: 
+                                            # string con los ids de las estaciones
+                                            # de origen concatenadas y separadas
+                                            # por una coma ','
+    repetitions = 0
+    entry = me.newMapEntry(pair, repetitions)
+    
+    if entry['value'] >= 1:
+        repetitions = entry['value'] + 1
+        me.setValue(entry, repetitions)
+        print(entry)
+        
+    else:
+        repetitions = 1
+        entry = me.newMapEntry(pair, repetitions)
+        me.setKey(entry,pair)
+
+    #print(m.get(citibike['pairs'], pair))
+    return citibike
+
+def avgDuration(citibike):
+    """
+    Actualiza el valor de los arcos al promedio de la duración de los
+    viajes entre dos estaciones
+    """
+    edges = gr.edges(citibike['graph'])
+    iterator = it.newIterator(edges)
+
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        pair = str(element['vertexA']) + ',' + str(element['vertexB'])
+        #entry = m.get(citibike['pairs'], pair)
+        #repetitions = entry['value']
+        #average = element['weight']/repetitions
     return citibike
 
 # ==============================
@@ -103,6 +154,10 @@ def req1 (citibike, station1, station2):
     num = scc.connectedComponents(sc)
     strongly = scc.stronglyConnected(sc, station1, station2)
     return (num,strongly)
+
+def numSCC(graph):
+    sc = scc.KosarajuSCC(graph['graph'])
+    return scc.connectedComponents(sc)
 
 def totalConnections(analyzer):
     """
@@ -132,3 +187,9 @@ def compareStations(stop, keyvaluestop):
         return 1
     else:
         return -1
+
+def comparePairs(id1, id2):
+    if (id1 == id2):
+        return 0
+    else:
+        return 1

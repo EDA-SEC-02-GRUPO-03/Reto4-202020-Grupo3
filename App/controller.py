@@ -60,6 +60,8 @@ def loadTrips(citibike):
         if filename.endswith('.csv'):
             print('Cargando archivo: ' + filename)
             loadFile(citibike, filename)
+    model.avgDuration(citibike)
+
     return citibike
 
 def loadFile(citibike, tripfile):
@@ -85,3 +87,6 @@ def totalStops(analyzer):
     Total de paradas de autobus
     """
     return model.totalStops(analyzer)
+
+def numSCC(analyzer):
+    return model.numSCC(analyzer)

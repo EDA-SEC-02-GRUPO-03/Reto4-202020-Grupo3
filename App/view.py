@@ -31,6 +31,8 @@ from App import controller
 from DISClib.ADT import stack
 import timeit
 assert config
+#Borrar
+from DISClib.ADT.graph import gr
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -47,6 +49,7 @@ citibike1 = 'Data\\201801-1-citibike-tripdata.csv'
 citibike2 = 'Data\\201801-1-citibike-tripdata.csv'
 citibike3 = 'Data\\201801-1-citibike-tripdata.csv'
 citibike4 = 'Data\\201801-1-citibike-tripdata.csv'
+recursionLimit = 20000
 
 # ___________________________________________________
 #  Menu principal
@@ -72,14 +75,19 @@ def printMenu():
     print("------------------------------------------------------")
 
 
-printMenu()
-
-
 def optionTwo():
-    pass
+    controller.loadTrips(cont)
+    numedges = controller.totalConnections(cont)
+    numvertex = controller.totalStops(cont)
+    print('Número de vértices: ' + str(numvertex))
+    print('Número de arcos: ' + str(numedges))
+    print('Límite de recursión actual: ' + str(sys.getrecursionlimit()))
+    sys.setrecursionlimit(recursionLimit)
+    print('El límite de recursión se ajusta a: ' + str(recursionLimit))
 
 def optionThree():
-    pass
+    scc = controller.numSCC(cont)
+    print('Número de elementos fuertemente conectados: ' + str(scc))
 
 def optionFour():
     pass
@@ -116,12 +124,6 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
-        controller.loadTrips(cont)
-        numedges = controller.totalConnections(cont)
-        numvertex = controller.totalStops(cont)
-        print('Numero de vertices: ' + str(numvertex))
-        print('Numero de arcos: ' + str(numedges))
-
         executiontime = timeit.timeit(optionTwo, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 

@@ -76,6 +76,9 @@ def loadFile(citibike, tripfile):
 #  Funciones para consultas
 # ___________________________________________________
 
+def req6(citibike, resis, inicio):
+    return model.req6(citibike, resis, inicio)
+
 def totalConnections(analyzer):
     """
     Total de enlaces entre las paradas

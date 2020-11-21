@@ -64,7 +64,6 @@ def newAnalyzer():
         citibike['pairs'] = m.newMap(numelements=14000,
                                      maptype='PROBING',
                                      comparefunction=comparePairs)
-
         return citibike
     except Exception as exp:
         error.reraise(exp, 'model:newAnalyzer')
@@ -86,8 +85,8 @@ def addStation(citibike, stationid):
     """
     Adiciona una estación como un vertice del grafo
     """
-    if not gr.containsVertex(citibike ['graph'], stationid):
-            gr.insertVertex(citibike ['graph'], stationid)
+    if not gr.containsVertex(citibike['graph'], stationid):
+            gr.insertVertex(citibike['graph'], stationid)
     return citibike
 
 def addConnection(citibike, origin, destination, duration):
@@ -95,8 +94,6 @@ def addConnection(citibike, origin, destination, duration):
     Adiciona un arco entre dos estaciones
     """
     edge = gr.getEdge(citibike['graph'], origin, destination)
-    if edge:
-
     if edge is None:
         gr.addEdge(citibike['graph'], origin, destination, duration)
     else:
@@ -108,26 +105,38 @@ def addConnection(citibike, origin, destination, duration):
 
 def addPairs(citibike, origin, destination):
     # edge = gr.getEdge(citibike['graph'], origin, destination)
-    repetitions = 0
-    pair = str(origin)+','+str(destination) # Creo la llave compuesta por: 
+    # repetitions = 0
+    pair = str(origin) + ',' + str(destination) # Creo la llave compuesta por:
                                             # string con los ids de las estaciones
                                             # de origen concatenadas y separadas
                                             # por una coma ','
-    repetitions = 0
-    entry = me.newMapEntry(pair, repetitions)
-    
-    if entry['value'] >= 1:
-        repetitions = entry['value'] + 1
-        me.setValue(entry, repetitions)
-        print(entry)
-        
-    else:
-        repetitions = 1
-        entry = me.newMapEntry(pair, repetitions)
-        me.setKey(entry,pair)
+    # repetitions = 0
+    # entry = me.newMapEntry(pair, repetitions)
 
-    #print(m.get(citibike['pairs'], pair))
-    return citibike
+    # if entry['value'] >= 1:
+    #     repetitions = entry['value'] + 1
+    #     me.setValue(entry, repetitions)
+    #     print(entry)
+
+    # else:
+    #     repetitions = 1
+    #     entry = me.newMapEntry(pair, repetitions)
+    #     me.setKey(entry,pair)
+
+    existe = m.contains(citibike['pairs'], pair)
+    # print(existe)
+    if not existe:
+        # entry = me.newMapEntry(pair, 1)
+        m.put(citibike['pairs'], pair, 1)
+    else:
+        entry = m.get(citibike['pairs'], pair)
+        value = me.getValue(entry)
+        # value += 1
+        # m.remove(citibike['pairs'], pair)
+        m.put(citibike['pairs'], pair, value + 1)
+    # print(m.contains(citibike['pairs'], pair))
+    # print('3', m.get(citibike['pairs'], pair))
+    # print(m.keySet(citibike['pairs']))
 
 def avgDuration(citibike):
     """
@@ -140,9 +149,12 @@ def avgDuration(citibike):
     while it.hasNext(iterator):
         element = it.next(iterator)
         pair = str(element['vertexA']) + ',' + str(element['vertexB'])
-        #entry = m.get(citibike['pairs'], pair)
-        #repetitions = entry['value']
-        #average = element['weight']/repetitions
+        entry = m.get(citibike['pairs'], pair)
+
+        repetitions = entry['value']
+        average = element['weight']/repetitions
+        # print(average)
+        ed.updateWeight(element, average)
     return citibike
 
 # ==============================
@@ -154,6 +166,52 @@ def req1 (citibike, station1, station2):
     num = scc.connectedComponents(sc)
     strongly = scc.stronglyConnected(sc, station1, station2)
     return (num,strongly)
+
+
+def req6(citibike, resis, inicio):
+    pendientes = [] #str del id
+    encontrados = {} #(llegada+origen: duracion)
+    primeros = gr.adjacents(citibike['graph'], inicio)
+
+    iterator = it.newIterator(primeros)
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        # print(element)
+        durac = ed.weight(gr.getEdge(citibike['graph'], inicio, element))
+        if  durac <= resis:
+            encontrados[element] = (inicio, int(durac))
+            pendientes.append(element)
+
+
+    while len(pendientes) > 0:
+        for i in pendientes:
+            adya = gr.adjacents(citibike['graph'], i)
+            if adya['size'] != 0:
+                # print(adya)
+
+                iterator = it.newIterator(adya)
+                while it.hasNext(iterator):
+                    element = it.next(iterator)
+                    # print(element)
+
+                    djk.Dijkstra(citibike['graph'], inicio)
+
+                    durac = 0
+                    llega = i
+                    while llega != inicio:
+                        durac += encontrados[llega][1]
+                        llega = encontrados[llega][0]
+
+                    relativ = ed.weight(gr.getEdge(citibike['graph'], i, element))
+                    if  durac <= resis and element not in encontrados.keys():
+                        encontrados[element] = (i, int(relativ))
+                        pendientes.append(element)
+            pendientes.remove(i)
+            print(len(pendientes))
+    # print(encontrados)
+    return encontrados
+
+
 
 def numSCC(graph):
     sc = scc.KosarajuSCC(graph['graph'])
@@ -189,7 +247,11 @@ def compareStations(stop, keyvaluestop):
         return -1
 
 def comparePairs(id1, id2):
+    id2 = id2['key']
+    # print(id1, id2)
     if (id1 == id2):
         return 0
+    elif (id1 < id2):
+        return -1
     else:
         return 1

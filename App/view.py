@@ -71,6 +71,7 @@ def printMenu():
     print("0- Salir")
     print("------------------------------------------------------")
 
+
 printMenu()
 
 
@@ -115,7 +116,6 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
-
         controller.loadTrips(cont)
         numedges = controller.totalConnections(cont)
         numvertex = controller.totalStops(cont)

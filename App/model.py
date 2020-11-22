@@ -153,7 +153,8 @@ def avgDuration(citibike):
 
         repetitions = entry['value']
         average = element['weight']/repetitions
-        # print(average)
+        # if str(element['vertexA']) == '72':
+        #    print(average)
         ed.updateWeight(element, average)
     return citibike
 
@@ -169,6 +170,7 @@ def req1 (citibike, station1, station2):
 
 
 def req6(citibike, resis, inicio):
+    "William Mendez"
     pendientes = [] #str del id
     encontrados = {} #(llegada+origen: duracion)
     primeros = gr.adjacents(citibike['graph'], inicio)
@@ -179,7 +181,7 @@ def req6(citibike, resis, inicio):
         # print(element)
         durac = ed.weight(gr.getEdge(citibike['graph'], inicio, element))
         if  durac <= resis:
-            encontrados[element] = (inicio, int(durac))
+            encontrados[element] = (inicio, round(durac, 2))
             pendientes.append(element)
 
 
@@ -193,21 +195,22 @@ def req6(citibike, resis, inicio):
                 while it.hasNext(iterator):
                     element = it.next(iterator)
                     # print(element)
+                    if element not in encontrados.keys() and \
+                         element not in pendientes:
+                        durac = 0
+                        llega = i
+                        while llega != inicio:
+                            durac += encontrados[llega][1]
+                            llega = encontrados[llega][0]
 
-                    djk.Dijkstra(citibike['graph'], inicio)
+                        relativ = ed.weight(gr.getEdge(citibike['graph'], i, element))
+                        if  durac + relativ <= resis:
+                            # print(durac, relativ)
+                            encontrados[element] = (i, round(relativ, 2))
+                            pendientes.append(element)
 
-                    durac = 0
-                    llega = i
-                    while llega != inicio:
-                        durac += encontrados[llega][1]
-                        llega = encontrados[llega][0]
-
-                    relativ = ed.weight(gr.getEdge(citibike['graph'], i, element))
-                    if  durac <= resis and element not in encontrados.keys():
-                        encontrados[element] = (i, int(relativ))
-                        pendientes.append(element)
             pendientes.remove(i)
-            print(len(pendientes))
+            # print(len(pendientes))
     # print(encontrados)
     return encontrados
 

@@ -172,18 +172,17 @@ def req1 (citibike, station1, station2):
 def req6(citibike, resis, inicio):
     "William Mendez"
     pendientes = [] #str del id
-    encontrados = {} #(llegada+origen: duracion)
+    encontrados = {} #{llegada: (origen, duracion)}
     primeros = gr.adjacents(citibike['graph'], inicio)
 
     iterator = it.newIterator(primeros)
     while it.hasNext(iterator):
         element = it.next(iterator)
         # print(element)
-        durac = ed.weight(gr.getEdge(citibike['graph'], inicio, element))
+        durac = ed.weight(gr.getEdge(citibike['graph'], inicio, element)) / 60
         if  durac <= resis:
             encontrados[element] = (inicio, round(durac, 2))
             pendientes.append(element)
-
 
     while len(pendientes) > 0:
         for i in pendientes:
@@ -196,16 +195,22 @@ def req6(citibike, resis, inicio):
                     element = it.next(iterator)
                     # print(element)
                     if element not in encontrados.keys() and \
-                         element not in pendientes:
+                         element not in pendientes and element != inicio:
+
                         durac = 0
                         llega = i
+
+                        print(i, element)
                         while llega != inicio:
+                            # print(durac)
                             durac += encontrados[llega][1]
                             llega = encontrados[llega][0]
+                            # print(durac)
 
-                        relativ = ed.weight(gr.getEdge(citibike['graph'], i, element))
-                        if  durac + relativ <= resis:
-                            # print(durac, relativ)
+                        relativ = ed.weight(gr.getEdge(citibike['graph'], i,
+                                            element)) / 60
+                        print(durac, relativ, durac + relativ, resis)
+                        if  (durac + relativ) <= resis:
                             encontrados[element] = (i, round(relativ, 2))
                             pendientes.append(element)
 

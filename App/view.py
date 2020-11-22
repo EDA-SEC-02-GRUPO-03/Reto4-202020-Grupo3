@@ -99,10 +99,13 @@ def optionSix():
     resis = int(input('⏳ Ingrese el tiempo disponible en minutos: '))
     inicio = input('🛑 Ingrese la estación inicial: ')
     resul = controller.req6(cont, resis, inicio)
-    print('las estaciones a las que se puede llegar desde', inicio, 'con',
-          resis, 'minutos son:')
-    for i in resul.keys():
-        print(i, 'desde', resul[i][0], '\n⬆', resul[i][1], 'minutos')
+    if resul == []:
+        print('datos no válidos')
+    else:
+        print('las estaciones a las que se puede llegar desde', inicio, 'con',
+            resis, 'minutos son:')
+        for i in resul.keys():
+            print(i, 'desde', resul[i][0], '\n\t⬆', resul[i][1], 'minutos')
     pass
 
 def optionSeven():
@@ -162,7 +165,7 @@ while True:
         executiontime = timeit.timeit(optionNine, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
-    elif int(inputs[0]) == 10 or inputs == 'C':
+    elif inputs == 'C' or int(inputs[0]) == 10:
         executiontime = timeit.timeit(optionTen, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 

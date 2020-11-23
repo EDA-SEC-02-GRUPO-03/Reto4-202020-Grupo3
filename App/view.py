@@ -98,7 +98,7 @@ def optionFive():
 def optionSix():
     resis = int(input('⏳ Ingrese el tiempo disponible en minutos: '))
     inicio = input('🛑 Ingrese la estación inicial: ')
-    resul = controller.req6(cont, resis, inicio)
+    resul = controller.req4(cont, resis, inicio)
     if resul == []:
         print('datos no válidos')
     else:

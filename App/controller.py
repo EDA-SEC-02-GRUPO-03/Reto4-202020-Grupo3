@@ -76,8 +76,11 @@ def loadFile(citibike, tripfile):
 #  Funciones para consultas
 # ___________________________________________________
 
-def req6(citibike, resis, inicio):
-    return model.req6(citibike, resis, inicio)
+def req4(citibike, resis, inicio):
+    return model.req4(citibike, resis, inicio)
+
+def req5(citibike, resis, inicio):
+    return model.req5(citibike, resis, inicio)
 
 def totalConnections(analyzer):
     """

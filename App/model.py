@@ -41,6 +41,13 @@ En este archivo definimos los TADs que vamos a usar y las operaciones
 de creacion y consulta sobre las estructuras de datos.
 """
 
+# import datetime
+
+# # using now() to get current time
+# current_time = datetime.datetime.now()
+# print ("Year : ", end = "")
+# print (current_time.year)
+
 # -----------------------------------------------------
 #                       API
 # -----------------------------------------------------
@@ -169,7 +176,7 @@ def req1 (citibike, station1, station2):
     return (num,strongly)
 
 
-def req6(citibike, resis, inicio):
+def req4(citibike, resis, inicio):
     "William Mendez"
     pendientes = [] #str del id
     encontrados = {} #{llegada: (origen, duracion)}
@@ -200,7 +207,7 @@ def req6(citibike, resis, inicio):
                         durac = 0
                         llega = i
 
-                        print(i, element)
+                        # print(i, element)
                         while llega != inicio:
                             # print(durac)
                             durac += encontrados[llega][1]
@@ -209,7 +216,7 @@ def req6(citibike, resis, inicio):
 
                         relativ = ed.weight(gr.getEdge(citibike['graph'], i,
                                             element)) / 60
-                        print(durac, relativ, durac + relativ, resis)
+                        # print(durac, relativ, durac + relativ, resis)
                         if  (durac + relativ) <= resis:
                             encontrados[element] = (i, round(relativ, 2))
                             pendientes.append(element)
@@ -219,7 +226,8 @@ def req6(citibike, resis, inicio):
     # print(encontrados)
     return encontrados
 
-
+def req5(citibike, edad):
+    pass
 
 def numSCC(graph):
     sc = scc.KosarajuSCC(graph['graph'])

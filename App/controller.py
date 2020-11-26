@@ -103,8 +103,11 @@ def ejecutarreq6 (citibike, lat1, lon1, lat2, lon2):
 
 def ejecutarreq7 (citibike, rango):
     retorno = model.req7(citibike, rango)
-    print ('La estación de salida es la ', retorno['vertexA'])
-    print ('La estación de llegada es la ', retorno['vertexB'])
+    if retorno != 'No hay':
+        print ('La estación de salida es la ', retorno['vertexA'])
+        print ('La estación de llegada es la ', retorno['vertexB'])
+    else:
+        print(retorno)
 
 def totalConnections(analyzer):
     """

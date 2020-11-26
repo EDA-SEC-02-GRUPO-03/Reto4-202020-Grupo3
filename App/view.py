@@ -101,7 +101,7 @@ def optionEight():
     controller.ejecutarreq6(cont, lat1, lon1, lat2, lon2)
 
 def optionNine():
-    pass
+    print(model.req7(cont, '21-30'))
 
 def optionTen():
     pass

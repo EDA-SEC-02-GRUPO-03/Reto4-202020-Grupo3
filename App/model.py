@@ -77,11 +77,12 @@ def addTrip(citibike, trip):
     latitude2 = float(trip['end station latitude'])
     longitude2 = float(trip['end station longitude'])
     edad = 2020 - int(trip['birth year'])
+    type = trip['usertype']
     addStation(citibike, origin)
     addStation(citibike, destination)
     addConnection(citibike, origin, destination, duration)
-    addStop(citibike, origin, latitude1, longitude1, edad, 's')
-    addStop(citibike, destination, latitude2, longitude2, edad, 'll')
+    addStop(citibike, origin, latitude1, longitude1, edad, 's', type)
+    addStop(citibike, destination, latitude2, longitude2, edad, 'll', type)
 
 def addStation(citibike, stationid):
     """
@@ -100,7 +101,7 @@ def addConnection(citibike, origin, destination, duration):
         gr.addEdge(citibike['graph'], origin, destination, duration)
     return citibike
 
-def addStop(citibike, stationid, latitude, longitude, edad, s_ll):
+def addStop(citibike, stationid, latitude, longitude, edad, s_ll, type):
     if m.contains(citibike['stops'], stationid):
         retorno = m.get(citibike['stops'], stationid)['value']
         m.remove(citibike['stops'], stationid)
@@ -119,7 +120,7 @@ def addStop(citibike, stationid, latitude, longitude, edad, s_ll):
                                         '41-50':0,
                                         '51-60':0,
                                         '60+':0,
-                                        'total':0}]
+                                        'total':0}, type]
     if s_ll == 's':
         a = 2
     else:
@@ -198,47 +199,7 @@ def req3 (citibike):
                     lstLeast.remove(j)
   
     return (lstArrival,lstDeparture,lstLeast)
-'''
-    for i in citibike['graph']['indegree']['table']['elements']:
-        if i['key'] != None:
-            diccLeast[i['key']] = i['value']
-            if len(lstArrival) < 3:
-                lstArrival.append(i)
-            else : 
-                for j in lstArrival:
-                    if i == j:
-                        j['value'] = j.get('value') + i['value']
-                    elif i['value'] > j['value']:
-                        lstArrival.append(i)
-                        lstArrival.remove(j)
-                        break
 
-    for i in citibike['graph']['vertices']['table']['elements']:
-        if i['key'] != None:
-            if i['key'] not in diccLeast.keys():
-                diccLeast[i['key']] = lt.size(i['value'])
-            else:
-                diccLeast[i['key']] = diccLeast.get(i['key']) + lt.size(i['value'])
-
-            if len(lstDeparture) < 3:
-                lstDeparture.append({'key': i['key'], 'value':lt.size(i['value'])})
-            else : 
-                for j in lstDeparture:
-                    if lt.size(i['value']) > j['value']:
-                        lstDeparture.append({'key': i['key'], 'value':lt.size(i['value'])})
-                        lstDeparture.remove(j)
-                        break
-    
-    for i in diccLeast:
-        if len(lstLeast) < 3:
-                lstLeast.append((i,diccLeast[i]))
-        else: 
-            for j in lstLeast:
-                if diccLeast[i] < j[1]:
-                    lstLeast.append((i,diccLeast[i]))
-                    lstLeast.remove(j)
-                    break
-'''
 
 
 def req5 (citibike, edad):
@@ -338,6 +299,24 @@ def req6(citibike, lat1, lon1, lat2, lon2):
         ruta = 'No hay ruta'
         
     return (estacion_salida, estacion_llegada, ruta)
+
+def req7 (citibike, rango):
+    lista = gr.edges(citibike['graph'])
+    iterador = it.newIterator(lista)
+    maximo = 0
+    pareja = 'No hay'
+    while it.hasNext(iterador):
+        elemento = it.next(iterador)
+        diccA = m.get(citibike['stops'],elemento['vertexA'])
+        diccB = m.get(citibike['stops'],elemento['vertexB'])
+        if diccA['value'][4] == 'Customer' and diccB['value'][4] == 'Customer':
+            suma = diccA['value'][2].get(rango) + diccB['value'][3].get(rango)
+            if suma > maximo:
+                pareja = elemento
+    
+    return (pareja)
+
+
 
     
 def numSCC(graph):

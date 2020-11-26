@@ -101,7 +101,8 @@ def optionEight():
     controller.ejecutarreq6(cont, lat1, lon1, lat2, lon2)
 
 def optionNine():
-    print(model.req7(cont, '21-30'))
+    rango = input('Ingrese el rango de edad (por ejemplo: 21-31): ')
+    controller.ejecutarreq7(cont, rango)
 
 def optionTen():
     pass

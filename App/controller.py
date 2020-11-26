@@ -100,7 +100,11 @@ def ejecutarreq6 (citibike, lat1, lon1, lat2, lon2):
     print ('La estación más cercana al punto de salida es la: ', retorno[0])
     print ('La estación más cercana al destino es la: ', retorno[1])
     print ('La ruta entre estas estaciones es: ', retorno[2])
-    
+
+def ejecutarreq7 (citibike, rango):
+    retorno = model.req7(citibike, rango)
+    print ('La estación de salida es la ', retorno['vertexA'])
+    print ('La estación de llegada es la ', retorno['vertexB'])
 
 def totalConnections(analyzer):
     """

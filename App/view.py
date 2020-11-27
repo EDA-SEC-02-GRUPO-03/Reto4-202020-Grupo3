@@ -98,15 +98,14 @@ def optionFive():
 def optionSix():
     resis = int(input('⏳ Ingrese el tiempo disponible en minutos: '))
     inicio = input('🛑 Ingrese la estación inicial: ')
-    resul = controller.req4(cont, resis, inicio)
-    if resul == []:
-        print('datos no válidos')
-    else:
+    try:
+        resul = controller.req4(cont, resis, inicio)
         print('las estaciones a las que se puede llegar desde', inicio, 'con',
             resis, 'minutos son:')
         for i in resul.keys():
             print(i, 'desde', resul[i][0], '\n\t⬆', resul[i][1], 'minutos')
-    pass
+    except:
+        print('datos no válidos')
 
 def optionSeven():
     pass
@@ -118,7 +117,20 @@ def optionNine():
     pass
 
 def optionTen():
-    pass
+    print('Ejemplos: 14580, 2018-01-24 \n\t 26701, 2018-01-13')
+    date = input('📅 Ingrese la fecha a consultar (AAAA-MM-DD): ')
+    id = input('🚲 Ingrese la id de la bicicleta a consultar: ')
+    try:
+        resul = controller.req8(cont, date, id)
+        print('Los resultados para la bicicleta', id, 'el día',
+            date, 'son:')
+        print('⏲ Tiempo de uso:', resul[0], 'minutos')
+        print('🚦 Tiempo estacionada:', resul[1], 'minutos')
+        print('🚩 Estaciones visitadas:')
+        for i in resul[2]:
+            print('\t-', i)
+    except:
+        print('Datos no válidos')
 
 """
 Menu principal
@@ -128,7 +140,7 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n>')
 
-    if int(inputs[0]) == 1:
+    if int(inputs) == 1:
         print("\nInicializando....")
         # cont es el controlador que se usará de acá en adelante
         cont = controller.init()
@@ -165,7 +177,7 @@ while True:
         executiontime = timeit.timeit(optionNine, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
-    elif inputs == 'C' or int(inputs[0]) == 10:
+    elif int(inputs) == 10:
         executiontime = timeit.timeit(optionTen, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 

@@ -28,6 +28,7 @@ from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
+from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
@@ -71,6 +72,9 @@ def newAnalyzer():
         citibike['pairs'] = m.newMap(numelements=14000,
                                      maptype='PROBING',
                                      comparefunction=comparePairs)
+        citibike['dates'] = om.newMap(omaptype='RBT',
+                                   comparefunction=compareDates)
+
         return citibike
     except Exception as exp:
         error.reraise(exp, 'model:newAnalyzer')
@@ -83,10 +87,13 @@ def addTrip(citibike, trip):
     origin = trip['start station id']
     destination = trip['end station id']
     duration = int(trip['tripduration'])
+    date = trip['starttime'][:10]
+    bikeId = trip['bikeid']
     addStation(citibike, origin)
     addStation(citibike, destination)
     addConnection(citibike, origin, destination, duration)
     addPairs(citibike, origin, destination)
+    addDate(citibike, date, bikeId, origin, destination, duration)
 
 def addStation(citibike, stationid):
     """
@@ -111,24 +118,10 @@ def addConnection(citibike, origin, destination, duration):
     return citibike
 
 def addPairs(citibike, origin, destination):
-    # edge = gr.getEdge(citibike['graph'], origin, destination)
-    # repetitions = 0
     pair = str(origin) + ',' + str(destination) # Creo la llave compuesta por:
                                             # string con los ids de las estaciones
                                             # de origen concatenadas y separadas
                                             # por una coma ','
-    # repetitions = 0
-    # entry = me.newMapEntry(pair, repetitions)
-
-    # if entry['value'] >= 1:
-    #     repetitions = entry['value'] + 1
-    #     me.setValue(entry, repetitions)
-    #     print(entry)
-
-    # else:
-    #     repetitions = 1
-    #     entry = me.newMapEntry(pair, repetitions)
-    #     me.setKey(entry,pair)
 
     existe = m.contains(citibike['pairs'], pair)
     # print(existe)
@@ -138,12 +131,7 @@ def addPairs(citibike, origin, destination):
     else:
         entry = m.get(citibike['pairs'], pair)
         value = me.getValue(entry)
-        # value += 1
-        # m.remove(citibike['pairs'], pair)
         m.put(citibike['pairs'], pair, value + 1)
-    # print(m.contains(citibike['pairs'], pair))
-    # print('3', m.get(citibike['pairs'], pair))
-    # print(m.keySet(citibike['pairs']))
 
 def avgDuration(citibike):
     """
@@ -164,6 +152,40 @@ def avgDuration(citibike):
         #    print(average)
         ed.updateWeight(element, average)
     return citibike
+
+def addDate(citibike, date, bikeId, origin, destination, duration):
+    if not om.contains(citibike['dates'], date): # No está la fecha
+        ids = {}                                 # Agregar info
+        stops = lt.newList(cmpfunction=compareIds)
+        lt.addFirst(stops, origin)
+        lt.addFirst(stops, destination)
+        ids[bikeId] = (duration, stops)
+        om.put(citibike['dates'], date, ids)
+    else:                                       # Está la fecha
+        value = om.get(citibike['dates'], date)
+
+        # print(value.keys())
+        # print(bikeId)
+        if bikeId not in value.keys():          # No está la bici
+            stops = lt.newList(cmpfunction=compareIds) # Agregar bici
+            lt.addFirst(stops, origin)
+            lt.addFirst(stops, destination)
+            value[bikeId] = (duration, stops)
+        else:                                   # Está la bici
+            # print(value[bikeId])
+            uso = value[bikeId][0]
+            value[bikeId] = (uso + duration, value[bikeId][1])
+            if not lt.isPresent(value[bikeId][1], origin): # No está la estación
+                lt.addLast(value[bikeId][1], origin)
+            else:
+                pass
+            if not lt.isPresent(value[bikeId][1], destination): # No está la estación
+                lt.addLast(value[bikeId][1], destination)
+            else:
+                pass
+
+
+
 
 # ==============================
 # Funciones de consulta
@@ -226,8 +248,20 @@ def req4(citibike, resis, inicio):
     # print(encontrados)
     return encontrados
 
-def req5(citibike, edad):
-    pass
+def req8(citibike, date, id):
+    infoFecha = om.get(citibike['dates'], date)
+    # print(infoFecha.keys())
+    infoBici = infoFecha[id]
+    t_uso = round((infoBici[0]) / 60)
+    t_libre = 1440 - t_uso
+    stops = []
+
+    iterator = it.newIterator(infoBici[1])
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        stops.append(element)
+    return (t_uso, t_libre, stops)
+
 
 def numSCC(graph):
     sc = scc.KosarajuSCC(graph['graph'])
@@ -271,3 +305,20 @@ def comparePairs(id1, id2):
         return -1
     else:
         return 1
+
+def compareDates(date1, date2):
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
+
+def compareIds(date1, date2):
+    # print(date1, date2)
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1

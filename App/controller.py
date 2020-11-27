@@ -70,6 +70,8 @@ def loadFile(citibike, tripfile):
                                 delimiter=",")
     for trip in input_file:
         model.addTrip(citibike, trip)
+
+    # print(citibike['dates'])
     return citibike
 
 # ___________________________________________________
@@ -79,8 +81,8 @@ def loadFile(citibike, tripfile):
 def req4(citibike, resis, inicio):
     return model.req4(citibike, resis, inicio)
 
-def req5(citibike, resis, inicio):
-    return model.req5(citibike, resis, inicio)
+def req8(citibike, date, id):
+    return model.req8(citibike, date, id)
 
 def totalConnections(analyzer):
     """

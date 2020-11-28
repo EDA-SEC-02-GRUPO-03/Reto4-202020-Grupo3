@@ -162,8 +162,6 @@ while True:
 
     elif int(inputs[0]) == 2:
 
-        controller.loadTrips(cont)
-
         executiontime = timeit.timeit(optionTwo, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 

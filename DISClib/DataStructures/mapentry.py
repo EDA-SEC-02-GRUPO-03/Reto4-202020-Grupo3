@@ -95,7 +95,7 @@ def getValue(entry):
     Args:
         entry: la pareja llave valor
     Returns:
-        El valor de la pareja
+        La llave de la pareja
     Raises:
         Exception
     """

@@ -86,3 +86,4 @@ def updateWeight(edge, newWeight):
     """
     edge['weight'] = newWeight
     return edge
+    

@@ -28,6 +28,7 @@ import os
 import config as cf
 from App import model
 import csv
+import os
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -88,24 +89,38 @@ def ejecutarreq3 (citibike):
         b.append('La estación '+ str(j['key']) + ' con '+ str(j['value']) + ' salidas')
     for j in retorno[2]:
         c.append('La estación '+ str(j['key']) + ' con '+ str(j['value']) + ' llegadas y salidas')
-    
+
     print ('Las Estaciones con más llegadas son: ', a)
     print ('Las Estaciones con más salidas son: ', b)
     print ('Las Estaciones con menos llegadas y salidas son: ', c)
-    
+
+def req4(citibike, resis, inicio):
+    return model.req4(citibike, resis, inicio)
+
 def ejecutarreq5 (citibike, edad):
     retorno = model.req5(citibike, edad)
     print ('La estación de la que más sale gente del grupo de edad es la: ', retorno[0])
     print ('La estación a la que más llega gente del grupo de edad es la: ', retorno[1])
     print ('La ruta entre esas estaciones es: ', retorno[2])
-    
+
 
 def ejecutarreq6 (citibike, lat1, lon1, lat2, lon2):
     retorno = model.req6(citibike, lat1, lon1, lat2, lon2)
     print ('La estación más cercana al punto de salida es la: ', retorno[0])
     print ('La estación más cercana al destino es la: ', retorno[1])
     print ('La ruta entre estas estaciones es: ', retorno[2])
-    
+
+def ejecutarreq7 (citibike, rango):
+    retorno = model.req7(citibike, rango)
+    if retorno != 'No hay':
+        print ('La estación de salida es la ', retorno['vertexA'])
+        print ('La estación de llegada es la ', retorno['vertexB'])
+    else:
+        print(retorno)
+
+
+def req8(citibike, date, id):
+    return model.req8(citibike, date, id)
 
 def totalConnections(analyzer):
     """
